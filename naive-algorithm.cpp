@@ -44,6 +44,23 @@ void generateVertices( int nVertices )
     #endif
 }
 
+// Function to allocate adjacency matrix
+void allocateMatrix(int dimension) {
+    matrix = new double*[dimension];
+    for ( int i = 0; i < dimension; i++ ) {
+        matrix[i] = new double[dimension];
+    }
+}
+
+void deallocate(int n) {
+    delete [] x;
+    delete [] y;
+    
+    for(int i = 0; i < n; i++) {
+        delete [] matrix[i];
+    }
+}
+
 int main( int argc, char** argv )
 {
     std::ofstream file( "naive.txt" );
@@ -52,12 +69,8 @@ int main( int argc, char** argv )
     for ( int nVertices = 1; nVertices < MAX_N; nVertices++ ) {
         // Generating X and Y values of each point in separated arrays
         generateVertices( nVertices );
-
-        // Allocating adjacency matrix
-        matrix = new double*[nVertices];
-        for ( int i = 0; i < nVertices; i++ )
-            matrix[i] = new double[nVertices];
-
+        allocateMatrix( nVertices );
+        
         // Saving execution starting time
         auto start = std::chrono::steady_clock::now( );
         
@@ -113,8 +126,9 @@ int main( int argc, char** argv )
         // Writing into file
         file << nVertices << " ";
         file << std::chrono::duration<double, std::milli> (duration).count( ) << std::endl;
+        
+        deallocate(nVertices);
     }
-
     file.close( );
     return 0;
 }
