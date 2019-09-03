@@ -2,4 +2,5 @@
 .vscode/
 
 # intermediate stuff
-main
+naive
+naive.txt
