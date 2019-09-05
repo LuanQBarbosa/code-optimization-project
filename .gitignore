@@ -2,5 +2,9 @@
 .vscode/
 
 # intermediate stuff
-naive
+algorithm
 naive.txt
+array.txt
+fusion.txt
+interchange.txt
+optimized.txt

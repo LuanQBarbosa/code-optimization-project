@@ -7,13 +7,16 @@
 #define MAX_N 1000
 #define DISTANCE( x1, x2, y1, y2 ) sqrt( (x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2) )
 
-int *x, *y;
+// Struct that merge both arrays representing the coordinates of a point
+struct point {
+    int x, y;
+} *points;
+
 double **matrix;
 
 void generateVertices( int nVertices )
 {
-    x = new int[nVertices];
-    y = new int[nVertices];
+    points = new point[nVertices];
     int i = 0, j = 0, k = 0;
     while ( i < nVertices ) {
         while ( rand( ) % 4 ) {
@@ -22,8 +25,8 @@ void generateVertices( int nVertices )
             while ( rand( ) % 10 ) {
                 k++;
             }
-            x[i] = j;
-            y[i] = k;
+            points[i].x = j;
+            points[i].y = k;
             i++;
 
             if ( i >= nVertices ) {
@@ -34,7 +37,7 @@ void generateVertices( int nVertices )
 
     #ifdef DEBUG
         for ( i = 0; i < num_vertices; i++ ) {
-            std::cout << x[i] << " " << y[i] << std::endl;
+            std::cout << points[i].x << " " << points[i].y << std::endl;
         }
         std::cout << std::endl;
     #endif
@@ -49,8 +52,7 @@ void allocateMatrix(int dimension) {
 }
 
 void deallocate(int n) {
-    delete [] x;
-    delete [] y;
+    delete [] points;
     
     for(int i = 0; i < n; i++) {
         delete [] matrix[i];
@@ -59,7 +61,7 @@ void deallocate(int n) {
 
 int main( int argc, char** argv )
 {
-    std::ofstream file( "naive.txt" );
+    std::ofstream file( "array.txt" );
     srand( time( nullptr ) );
 
     for ( int nVertices = 1; nVertices < MAX_N; nVertices++ ) {
@@ -73,7 +75,7 @@ int main( int argc, char** argv )
         // Filling matrix with the distance between each vertex ( inefficient access of matrix positions )
         for ( int i = 0; i < nVertices; i++ ) {
             for ( int j = 0; j < nVertices; j++ ) {
-                matrix[j][i] = DISTANCE( x[i], y[i], x[j], y[j] );
+                matrix[j][i] = DISTANCE( points[i].x, points[i].y, points[j].x, points[j].y );
             }
         }
 
@@ -120,12 +122,12 @@ int main( int argc, char** argv )
         auto duration = end - start;
 
         // Writing into file
-        // file << nVertices << " ";
+        //file << nVertices << " ";
         file << std::chrono::duration<double, std::milli> (duration).count( ) << std::endl;
         
         deallocate(nVertices);
     }
-
+    
     file.close( );
     return 0;
 }

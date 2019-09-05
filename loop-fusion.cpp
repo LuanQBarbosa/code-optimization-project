@@ -5,14 +5,10 @@
 #include <chrono>
 
 #define MAX_N 1000
+#define DISTANCE( x1, x2, y1, y2 ) sqrt( (x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2) )
 
 int *x, *y;
 double **matrix;
-
-double computeDistance( double x1, double y1, double x2, double y2 )
-{
-    return sqrt( (x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2) );
-}
 
 void generateVertices( int nVertices )
 {
@@ -78,7 +74,7 @@ int main( int argc, char** argv )
         double maxD = 0;
         for ( int i = 0; i < nVertices; i++ ) {
             for ( int j = 0; j < nVertices; j++ ) {
-                matrix[j][i] = computeDistance( x[i], y[i], x[j], y[j] );
+                matrix[j][i] = DISTANCE( x[i], y[i], x[j], y[j] );
                 if ( matrix[j][i] > maxD )
                     maxD = matrix[j][i];
             }
@@ -118,11 +114,12 @@ int main( int argc, char** argv )
         auto duration = end - start;
         
         // Writing into file
-        file << nVertices << " ";
+        //file << nVertices << " ";
         file << std::chrono::duration<double, std::milli> (duration).count( ) << std::endl;
         
         deallocate(nVertices);
     }
+
     file.close( );
     return 0;
 }
