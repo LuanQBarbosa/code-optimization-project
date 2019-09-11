@@ -45,12 +45,12 @@ Even though this approach solves the problem, it has a lot of flaws as we will s
 In this part, given the code implemented [above](https://github.com/LuanQBarbosa/code-optimization-project#introduction), we have made some optimizations in order to allow it to have a better cache memory usage, and therefore a better performance.
 
 ### Loop Interchange
-As we have learned on class, when a processor accesses something from the memory for the first time, it will bring an entire block of data from memory to cache, and then an access to something on that block can be done by on the cache, which is faster. When implementing the algorithm we have used to access a matrix element:
+As we have learned on class, when a processor accesses something from memory for the first time, it will bring an entire block of data to cache, and then an access to something on that block can be done by on the cache, which is faster. When implementing the algorithm we have used the following syntax to access a matrix element:
 ```C++
 matrix[j][i]
 ```
 
-Which makes a poor use of cache memory. Since in each iteration of the inner loop we are incrementing J and in C++ array elements in the same row are stored consecutively in memory, an access to a row for the first time is likely to cause a cache miss, but the next elements can be accessed on the cache. However, by incrementing the row number at every inner loop iteration, it is likely to cause a cache miss and therefore decreasing performance. In order to fix this, we have changed the code to increment the column acessed in the inner loop, and the row in the outer loop, this has been done in each loop of the algorithm:
+Which makes a poor use of cache memory. Because at each iteration of the inner loop we are incrementing J, and since in C++ array elements in the same row are stored consecutively in memory, an access to a row for the first time is likely to cause a cache miss, but on the other side we can access the other elements from that row without having a cache miss. However, by incrementing the row number at every inner loop iteration, it is likely to cause a cache miss due to the next row not being on cache, and even worse, when finishing the inner loop the next element of the first row is likely to have been removed from cache due to limited storage capacity which will cause a cache miss and therefore decreasing performance. In order to fix this, we have changed the code to increment the column acessed in the inner loop, and the row in the outer loop in order to reduce the number of cache misses, this has been done in each loop of the algorithm:
 ```C++
 for ( int i = 0; i < nVertices; i++ ) {
     for ( int j = 0; j < nVertices; j++ ) {
@@ -60,15 +60,28 @@ for ( int i = 0; i < nVertices; i++ ) {
 ```
 
 ### Loop Fusion
-(TODO)
+The code implemented as a näive approach had 3 loops, all iterating over the same range and data, however the third loop needs the result from the second in order to properly execute, because of this we may merge the first and second loops into one, which may decrease the number of cache misses due to using a previously referenced item consecutively which can be done on cache. So the code for those loops have become:
+```C++
+double maxD = 0;
+    for ( int i = 0; i < nVertices; i++ ) {
+        for ( int j = 0; j < nVertices; j++ ) {
+            matrix[i][j] = DISTANCE( points[i].x, points[i].y, points[j].x, points[j].y );
+            if ( matrix[i][j] > maxD )
+                maxD = matrix[i][j];
+        }
+    }
+```
 
 ### Array Merge
+(TODO)
+
+### Comparison
 (TODO)
 
 ## Part II - Paralellism Optimization
 (TODO)
 
 ## References
-Content seen on the Computer Architecture II class (Prof. Alisson Brito)
+Content seen on the Computer Architecture II class (Prof. Alisson Brito)<br>
 [Loop Interchange](https://en.wikipedia.org/wiki/Loop_interchange)<br>
 (TODO)
