@@ -63,20 +63,40 @@ for ( int i = 0; i < nVertices; i++ ) {
 The code implemented as a näive approach had 3 loops, all iterating over the same range and data, however the third loop needs the result from the second in order to properly execute, because of this we may merge the first and second loops into one, which may decrease the number of cache misses due to using a previously referenced item consecutively which can be done on cache. So the code for those loops have become:
 ```C++
 double maxD = 0;
-    for ( int i = 0; i < nVertices; i++ ) {
-        for ( int j = 0; j < nVertices; j++ ) {
-            matrix[i][j] = DISTANCE( points[i].x, points[i].y, points[j].x, points[j].y );
-            if ( matrix[i][j] > maxD )
-                maxD = matrix[i][j];
-        }
+for ( int i = 0; i < nVertices; i++ ) {
+    for ( int j = 0; j < nVertices; j++ ) {
+        matrix[i][j] = DISTANCE( points[i].x, points[i].y, points[j].x, points[j].y );
+        if ( matrix[i][j] > maxD )
+            maxD = matrix[i][j];
     }
+}
 ```
 
 ### Array Merge
-(TODO)
+Another optimization idea was to merge the x and y arrays into one through the use of an array of struct called point. This will make a better use of spatial locality when computing the distance on the first loop. Since both informations will be together in the same array, it will generate only one cache miss, instead of two when accessing an index not on cache. Therefore, the code for the struct has become:
+```C++
+struct point {
+    int x, y;
+} *points;
+```
+
+And the fused loop has been changed to use the struct when computing the distance:
+```C++
+double maxD = 0;
+for ( int i = 0; i < nVertices; i++ ) {
+    for ( int j = 0; j < nVertices; j++ ) {
+        matrix[i][j] = DISTANCE( points[i].x, points[i].y, points[j].x, points[j].y );
+        if ( matrix[i][j] > maxD )
+            maxD = matrix[i][j];
+    }
+}
+```
 
 ### Comparison
-(TODO)
+After putting the optimizations made before together, we have made a comparison between the näive approach and the cache optimized code. Giving the following graph:
+<p align = "center"><img src="https://raw.githubusercontent.com/LuanQBarbosa/code-optimization-project/master/images/comparison.png"></p>
+
+As you can see on the graph we had an increase in performance of around 45% in the optimized code.
 
 ## Part II - Paralellism Optimization
 (TODO)
