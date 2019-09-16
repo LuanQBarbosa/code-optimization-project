@@ -102,6 +102,30 @@ As we can see on the graph we had an increase in performance of up to 45% in the
 ## Part II - Paralellism Optimization
 As the second part, given the algorithm optimized for cache implemented [above](https://github.com/LuanQBarbosa/code-optimization-project#introduction), we have made some optimizations to make it take advantage of processor paralellism.
 
+### Parallel Fill and Search
+The first step of our optimized algorithm filled the matrix and found its highest value in a nested for. In order to improve performance we can make the nested loop work in parallel, but it raises the critical section problem, since we have a shared variable containing the matrix highest value, which will be used to compare the current element and update if it's greater, we wouldn't be able to do it in a parallel manner due to memory consistency, however using a critical section in the inner loop would make the parellelized algorithm as bad as serialized one. In order to avoid it, we have used a private variable called localMaxD holding the highest distance found by each thread and a shared variable called globalMaxD which will hold the whole matrix highest value. And thus, we may only update it on the end of the inner loop, decreasing the number of critical regions.
+```C++
+double globalMaxD = 0;
+double localMaxD = 0;
+#pragma omp parallel for private( localMaxD ) shared( globalMaxD )
+for ( int i = 0; i < nVertices; i++ ) {
+    for ( int j = 0; j < nVertices; j++ ) {
+        matrix[i][j] = DISTANCE( points[i].x, points[j].x, points[i].y, points[j].y );
+        if ( matrix[i][j] > localMaxD )
+            localMaxD = matrix[i][j];
+    }
+
+    #pragma omp critical
+    {
+        if ( localMaxD > globalMaxD )
+            globalMaxD = localMaxD;
+    }
+}
+```
+
+### Parallel Normalization
+(TODO)
+
 ### Comparison
 (TODO)
 
