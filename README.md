@@ -1,5 +1,5 @@
 # Code Optimization Project
-During the Computer Architecture II course at UFPB, we're presented to the concepts of cache memory and processor parallelism, which can make computers faster. As an assigment we were instructed to optimize a given code using these concepts.
+During the Computer Architecture II course at UFPB, we're presented to the concepts of cache memory and processor parallelism, which can make computers faster. As an assigment we were instructed to optimize a chosen code using these concepts.
 
 ## Contents
 [Introduction](https://github.com/LuanQBarbosa/code-optimization-project#introduction)<br>
@@ -127,7 +127,7 @@ for ( int i = 0; i < nVertices; i++ ) {
 ```
 
 ### Parallel Normalization
-The second step of the algorithm did the matrix normalization, which is basically iterate over the matrix and divide each element by the highest value found previously. Since we do not have any critical sections, we don't need to declare private/shared variables. To make sure the loop is fully parallelized, we use *collapse( 2 )* and thus the normalization code has become:
+The second step of the algorithm did the matrix normalization, which is basically iterate over the matrix and divide each element by the highest value found previously. Since we do not have any critical sections, we don't need to declare private/shared variables. To make sure the loop is fully parallelized, we use *collapse( 2 )* to inform that it's a nested loop, and thus the normalization code has become:
 ```C++
 #pragma omp parallel for collapse( 2 )
 for ( int i = 0; i < nVertices; i++ ) {
