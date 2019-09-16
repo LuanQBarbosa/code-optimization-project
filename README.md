@@ -1,10 +1,10 @@
 # Code Optimization Project
-During the Computer Architecture II course at UFPB, we're presented to the concepts of cache memory and processor paralellism, which can make computers faster. As an assigment we were instructed to optimize a given code using these concepts.
+During the Computer Architecture II course at UFPB, we're presented to the concepts of cache memory and processor parallelism, which can make computers faster. As an assigment we were instructed to optimize a given code using these concepts.
 
 ## Contents
 [Introduction](https://github.com/LuanQBarbosa/code-optimization-project#introduction)<br>
 [Part I - Cache Memory Optimization](https://github.com/LuanQBarbosa/code-optimization-project#part-i---cache-memory-optimization) <br>
-[Part II - Paralellism Optimization](https://github.com/LuanQBarbosa/code-optimization-project#part-ii---paralellism-optimization) <br>
+[Part II - Parallelism Optimization](https://github.com/LuanQBarbosa/code-optimization-project#part-ii---parallelism-optimization) <br>
 
 ## Introduction
 For this assignment we have implemented an algorithm that solves the following problem:
@@ -99,11 +99,19 @@ After putting the optimizations made before together, we have made a comparison 
 
 As we can see on the graph we had an increase in performance of up to 45% in the optimized code in terms of execution time.
 
-## Part II - Paralellism Optimization
-As the second part, given the algorithm optimized for cache implemented [above](https://github.com/LuanQBarbosa/code-optimization-project#introduction), we have made some optimizations to make it take advantage of processor paralellism.
+## Part II - Parallelism Optimization
+As the second part, given the algorithm optimized for cache implemented [above](https://github.com/LuanQBarbosa/code-optimization-project#part-i---cache-memory-optimization), we have made some optimizations to make it take advantage of processor parallelism using the OpenMP library.
 
 ### Parallel Fill and Search
-The first step of our optimized algorithm filled the matrix and found its highest value in a nested for. In order to improve performance we can make the nested loop work in parallel, but it raises the critical section problem, since we have a shared variable containing the matrix highest value, which will be used to compare the current element and update if it's greater, we wouldn't be able to do it in a parallel manner due to memory consistency, however using a critical section in the inner loop would make the parellelized algorithm as bad as serialized one. In order to avoid it, we have used a private variable called localMaxD holding the highest distance found by each thread and a shared variable called globalMaxD which will hold the whole matrix highest value. And thus, we may only update it on the end of the inner loop, decreasing the number of critical regions.
+The first step of our optimized algorithm filled the matrix and found its highest value in a nested loop. In order to improve performance we can make the nested loop work in parallel, but it raises the critical section problem, since we have a shared variable containing the matrix highest value, which will be used to compare the current element and update if it's greater:
+```C++
+double maxD = 0;
+...
+if ( matrix[i][j] > maxD )
+    maxD = matrix[i][j];
+```
+
+We cannot let more than one thread do the above code at same time, or we will have memory consistency issues. Thus, a first approach would be to use a critical section in the inner loop, however this would make the parallelized algorithm as bad as serialized one. In order to avoid it, we have used a private variable called localMaxD holding the highest distance found by each thread and a shared variable called globalMaxD which will hold the whole matrix highest value. And thus, we may only update it on the end of the inner loop, decreasing the number of critical regions and incresing the portion of parallelized work:
 ```C++
 double globalMaxD = 0;
 double localMaxD = 0;
@@ -124,7 +132,15 @@ for ( int i = 0; i < nVertices; i++ ) {
 ```
 
 ### Parallel Normalization
-(TODO)
+The second step of the algorithm did the matrix normalization, which is basically iterate over the matrix and divide each element by the highest value found previously. Since we do not have any critical sections, we don't need to declare private/shared variables, and thus the normalization code has become:
+```C++
+#pragma omp parallel for collapse( 2 )
+for ( int i = 0; i < nVertices; i++ ) {
+    for ( int j = 0; j < nVertices; j++ ) {
+        matrix[i][j] /= globalMaxD;
+    }
+}
+```
 
 ### Comparison
 (TODO)
@@ -132,4 +148,5 @@ for ( int i = 0; i < nVertices; i++ ) {
 ## References
 Content seen on the Computer Architecture II class (Prof. Alisson Brito)<br>
 [Loop Interchange](https://en.wikipedia.org/wiki/Loop_interchange)<br>
-(TODO)
+[Loop fusion and fission](https://en.wikipedia.org/wiki/Loop_fission_and_fusion)<br>
+[Hands-on introduction to OpenMP by Tim Mattson](https://www.openmp.org/wp-content/uploads/Intro_To_OpenMP_Mattson.pdf)<br>
