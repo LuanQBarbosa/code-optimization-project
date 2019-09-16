@@ -139,16 +139,17 @@ for ( int i = 0; i < nVertices; i++ ) {
 
 ## Comparison
 After implementing the [cache optimized](https://github.com/LuanQBarbosa/code-optimization-project#part-i---cache-memory-optimization) and the [parallel](https://github.com/LuanQBarbosa/code-optimization-project#part-ii---parallelism-optimization) versions we can now compare the results against the [näive](https://github.com/LuanQBarbosa/code-optimization-project#introduction) approach as we can see on the following graph:
-<p align = "center"><img src="https://raw.githubusercontent.com/LuanQBarbosa/code-optimization-project/master/images/comparison.png"></p>
+<p align = "center"><img src="https://raw.githubusercontent.com/LuanQBarbosa/code-optimization-project/master/images/comparison2.png"></p>
 
 The computer specs used for this assignment were:
---- | ---
-Processor | Intel Core i5-8300H
-Processor Clock | 2.3 GHz up to 4.00 GHz
-Number of cores | 4
-Number of threads | 8
-RAM | 8 GB DDR4 2666 MHz
-Cache | 8MB
+
+|           |                                                |
+|-----------|------------------------------------------------|
+| Processor | Intel Core i5-8300H @ (2.3 GHz up to 4.00 GHz) |
+| Cores     | 4                                              |
+| Threads   | 8                                              |
+| Cache     | 8 Mb                                           |
+| RAM       | 8 GB DDR4 @ 2666 MHz                           |
 
 In the graph, the bold lines are the moving average for the previous 50 iterations. As we can see, the näive approach had the worst performance, where the cache optimized version increase performance in about 40 percent which is significant amount, especially when dealing with a large input size, meaning that an algorithm that can make a better use of cache memory will be faster than an algorithm that does the same thing but is not optimized. However, the biggest increase in performance came when we parallelized the code, as we managed to divide the work through all the computer processors, in this case we managed to compute the same case in about 1/4 of the time of the optimized algorithm, and about 1/6 of the time of the näive algorithm.
 
