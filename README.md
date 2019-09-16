@@ -7,7 +7,8 @@ During the Computer Architecture II course at UFPB, we're presented to the conce
 [Part II - Paralellism Optimization](https://github.com/LuanQBarbosa/code-optimization-project#part-ii---paralellism-optimization) <br>
 
 ## Introduction
-Given a set of N points, each with a (X, Y) coordinate, generate the corresponding complete graph and it's adjacency matrix. Then, find in the matrix the highest value and normalize the matrix using the highest value previously found.
+For this assignment we have implemented an algorithm that solves the following problem:
+> Given a set of N points, each with a (X, Y) coordinate, generate the corresponding complete graph and it's adjacency matrix. Then, find in the matrix the highest value and normalize the matrix using the highest value previously found.
 
 As a first approach to this problem we've implemented the following code (naive-algorithm.cpp):
 ```C++
@@ -42,7 +43,7 @@ for ( int i = 0; i < nVertices; i++ ) {
 Even though this approach solves the problem, it has a lot of flaws as we will show later in the following sections.
 
 ## Part I - Cache Memory Optimization
-In this part, given the code implemented [above](https://github.com/LuanQBarbosa/code-optimization-project#introduction), we have made some optimizations in order to allow it to have a better cache memory usage, and therefore a better performance.
+In this part, given the algorithm implemented [above](https://github.com/LuanQBarbosa/code-optimization-project#introduction), we have made some optimizations in order to allow it to have a better cache memory usage, and therefore a better performance.
 
 ### Loop Interchange
 As we have learned on class, when a processor accesses something from memory for the first time, it will bring an entire block of data to cache, and then an access to something on that block can be done by on the cache, which is faster. When implementing the algorithm we have used the following syntax to access a matrix element:
@@ -50,7 +51,7 @@ As we have learned on class, when a processor accesses something from memory for
 matrix[j][i]
 ```
 
-Which makes a poor use of cache memory. Because at each iteration of the inner loop we are incrementing J, and since in C++ array elements in the same row are stored consecutively in memory, an access to a row for the first time is likely to cause a cache miss, but on the other side we can access the other elements from that row without having a cache miss. However, by incrementing the row number at every inner loop iteration, it is likely to cause a cache miss due to the next row not being on cache, and even worse, when finishing the inner loop the next element of the first row is likely to have been removed from cache due to limited storage capacity which will cause a cache miss and therefore decreasing performance. In order to fix this, we have changed the code to increment the column acessed in the inner loop, and the row in the outer loop in order to reduce the number of cache misses, this has been done in each loop of the algorithm:
+Which makes a poor use of cache memory. In C (and C++) array elements in the same row are stored consecutively in memory, and thus, an access to a row for the first time is likely to cause a cache miss, but on the other side we can access the other elements from that row without having a cache miss due to the block containing the element being transferred to cache. However, by incrementing the row number at every inner loop iteration, it is likely to cause a cache miss due to the next row not being on cache, and even worse, when finishing the inner loop the next element of the first row is likely to have been removed from cache due to its limited storage capacity which will cause a cache miss and therefore will decrease performance further. In order to fix this, we have changed the code to increment the column acessed in the inner loop, and the row in the outer loop in order to reduce the number of cache misses, this has been done in each loop of the algorithm:
 ```C++
 for ( int i = 0; i < nVertices; i++ ) {
     for ( int j = 0; j < nVertices; j++ ) {
@@ -77,7 +78,7 @@ Another optimization idea was to merge the x and y arrays into one through the u
 ```C++
 struct point {
     int x, y;
-} *points;
+} points[nVertices];
 ```
 
 And the fused loop has been changed to use the struct when computing the distance:
@@ -96,9 +97,12 @@ for ( int i = 0; i < nVertices; i++ ) {
 After putting the optimizations made before together, we have made a comparison between the näive approach and the cache optimized code. Giving the following graph:
 <p align = "center"><img src="https://raw.githubusercontent.com/LuanQBarbosa/code-optimization-project/master/images/comparison.png"></p>
 
-As you can see on the graph we had an increase in performance of around 45% in the optimized code.
+As we can see on the graph we had an increase in performance of up to 45% in the optimized code in terms of execution time.
 
 ## Part II - Paralellism Optimization
+As the second part, given the algorithm optimized for cache implemented [above](https://github.com/LuanQBarbosa/code-optimization-project#introduction), we have made some optimizations to make it take advantage of processor paralellism.
+
+### Comparison
 (TODO)
 
 ## References
