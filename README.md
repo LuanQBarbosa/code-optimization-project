@@ -5,6 +5,7 @@ During the Computer Architecture II course at UFPB, we're presented to the conce
 [Introduction](https://github.com/LuanQBarbosa/code-optimization-project#introduction)<br>
 [Part I - Cache Memory Optimization](https://github.com/LuanQBarbosa/code-optimization-project#part-i---cache-memory-optimization) <br>
 [Part II - Parallelism Optimization](https://github.com/LuanQBarbosa/code-optimization-project#part-ii---parallelism-optimization) <br>
+[Comparison](https://github.com/LuanQBarbosa/code-optimization-project#comparison) <br>
 
 ## Introduction
 For this assignment we have implemented an algorithm that solves the following problem:
@@ -93,12 +94,6 @@ for ( int i = 0; i < nVertices; i++ ) {
 }
 ```
 
-### Comparison
-After putting the optimizations made before together, we have made a comparison between the näive approach and the cache optimized code. Giving the following graph:
-<p align = "center"><img src="https://raw.githubusercontent.com/LuanQBarbosa/code-optimization-project/master/images/comparison.png"></p>
-
-As we can see on the graph we had an increase in performance of up to 45% in the optimized code in terms of execution time.
-
 ## Part II - Parallelism Optimization
 As the second part, given the algorithm optimized for cache implemented [above](https://github.com/LuanQBarbosa/code-optimization-project#part-i---cache-memory-optimization), we have made some optimizations to make it take advantage of processor parallelism using the OpenMP library.
 
@@ -142,8 +137,20 @@ for ( int i = 0; i < nVertices; i++ ) {
 }
 ```
 
-### Comparison
-(TODO)
+## Comparison
+After implementing the [cache optimized](https://github.com/LuanQBarbosa/code-optimization-project#part-i---cache-memory-optimization) and the [parallel](https://github.com/LuanQBarbosa/code-optimization-project#part-ii---parallelism-optimization) versions we can now compare the results against the [näive](https://github.com/LuanQBarbosa/code-optimization-project#introduction) approach as we can see on the following graph:
+<p align = "center"><img src="https://raw.githubusercontent.com/LuanQBarbosa/code-optimization-project/master/images/comparison.png"></p>
+
+The computer specs used for this assignment were:
+--- | ---
+Processor | Intel Core i5-8300H
+Processor Clock | 2.3 GHz up to 4.00 GHz
+Number of cores | 4
+Number of threads | 8
+RAM | 8 GB DDR4 2666 MHz
+Cache | 8MB
+
+In the graph, the bold lines are the moving average for the previous 50 iterations. As we can see, the näive approach had the worst performance, where the cache optimized version increase performance in about 40 percent which is significant amount, especially when dealing with a large input size, meaning that an algorithm that can make a better use of cache memory will be faster than an algorithm that does the same thing but is not optimized. However, the biggest increase in performance came when we parallelized the code, as we managed to divide the work through all the computer processors, in this case we managed to compute the same case in about 1/4 of the time of the optimized algorithm, and about 1/6 of the time of the näive algorithm.
 
 ## References
 Content seen on the Computer Architecture II class (Prof. Alisson Brito)<br>
