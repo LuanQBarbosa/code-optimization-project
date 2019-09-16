@@ -9,7 +9,7 @@ During the Computer Architecture II course at UFPB, we're presented to the conce
 
 ## Introduction
 For this assignment we have implemented an algorithm that solves the following problem:
-> Given a set of N points, each with a (X, Y) coordinate, generate the corresponding complete graph and it's adjacency matrix. Then, find in the matrix the highest value and normalize the matrix using the highest value previously found.
+> Given a set of N points, each with a (X, Y) coordinate, generate the corresponding complete graph as an adjacency matrix. Then, find in the matrix the highest value and normalize the matrix using the highest value previously found.
 
 As a first approach to this problem we've implemented the following code (naive-algorithm.cpp):
 ```C++
@@ -47,7 +47,7 @@ Even though this approach solves the problem, it has a lot of flaws as we will s
 In this part, given the algorithm implemented [above](https://github.com/LuanQBarbosa/code-optimization-project#introduction), we have made some optimizations in order to allow it to have a better cache memory usage, and therefore a better performance.
 
 ### Loop Interchange
-As we have learned on class, when a processor accesses something from memory for the first time, it will bring an entire block of data to cache, and then an access to something on that block can be done by on the cache, which is faster. When implementing the algorithm we have used the following syntax to access a matrix element:
+As we have learned on class, when a processor accesses something from memory for the first time, it will bring an entire block of data to cache, and then an access to something on that block can be done on the cache, which is faster. When implementing the algorithm we have used the following syntax to access a matrix element:
 ```C++
 matrix[j][i]
 ```
@@ -127,7 +127,7 @@ for ( int i = 0; i < nVertices; i++ ) {
 ```
 
 ### Parallel Normalization
-The second step of the algorithm did the matrix normalization, which is basically iterate over the matrix and divide each element by the highest value found previously. Since we do not have any critical sections, we don't need to declare private/shared variables, and thus the normalization code has become:
+The second step of the algorithm did the matrix normalization, which is basically iterate over the matrix and divide each element by the highest value found previously. Since we do not have any critical sections, we don't need to declare private/shared variables. To make sure the loop is fully parallelized, we use *collapse( 2 )* and thus the normalization code has become:
 ```C++
 #pragma omp parallel for collapse( 2 )
 for ( int i = 0; i < nVertices; i++ ) {
