@@ -75,7 +75,7 @@ int main( int argc, char** argv )
         // Filling matrix with the distance between each vertex ( inefficient access of matrix positions )
         for ( int i = 0; i < nVertices; i++ ) {
             for ( int j = 0; j < nVertices; j++ ) {
-                matrix[j][i] = DISTANCE( points[i].x, points[i].y, points[j].x, points[j].y );
+                matrix[j][i] = DISTANCE( points[i].x, points[j].x, points[i].y, points[j].y );
             }
         }
 

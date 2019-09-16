@@ -73,7 +73,7 @@ int main( int argc, char** argv )
         // Filling matrix with the distance between each vertex ( Loop interchange optimization: matrix[j][i] to matrix[i][j]
         for ( int i = 0; i < nVertices; i++ ) {
             for ( int j = 0; j < nVertices; j++ ) {
-                matrix[i][j] = DISTANCE( x[i], y[i], x[j], y[j] );
+                matrix[j][i] = DISTANCE( x[i], x[j], y[i], y[j] );
             }
         }
         

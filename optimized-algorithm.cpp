@@ -36,7 +36,7 @@ void generateVertices( int nVertices )
     }
 
     #ifdef DEBUG
-        for ( i = 0; i < num_vertices; i++ ) {
+        for ( i = 0; i < nVertices; i++ ) {
             std::cout << points[i].x << " " << points[i].y << std::endl;
         }
         std::cout << std::endl;
@@ -76,14 +76,14 @@ int main( int argc, char** argv )
         double maxD = 0;
         for ( int i = 0; i < nVertices; i++ ) {
             for ( int j = 0; j < nVertices; j++ ) {
-                matrix[i][j] = DISTANCE( points[i].x, points[i].y, points[j].x, points[j].y );
+                matrix[i][j] = DISTANCE( points[i].x, points[j].x, points[i].y, points[j].y );
                 if ( matrix[i][j] > maxD )
                     maxD = matrix[i][j];
             }
         }
         #ifdef DEBUG
-            for ( i = 0; i < nVertices; i++ ) {
-                for ( j = 0; j < nVertices; j++ ) {
+            for ( int i = 0; i < nVertices; i++ ) {
+                for ( int j = 0; j < nVertices; j++ ) {
                     std::cout << matrix[i][j] << "  ";
                 }
 
@@ -100,8 +100,8 @@ int main( int argc, char** argv )
         }
 
         #ifdef DEBUG
-            for ( i = 0; i < nVertices; i++ ) {
-                for ( j = 0; j < nVertices; j++ ) {
+            for ( int i = 0; i < nVertices; i++ ) {
+                for ( int j = 0; j < nVertices; j++ ) {
                     std::cout << matrix[i][j] << "  ";
                 }
 
